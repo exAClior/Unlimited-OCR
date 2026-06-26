@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>btw — how large is the model?</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        surface: 'rgb(17 24 39)',
+        card: 'rgb(31 41 55 / 0.5)',
+      }
+    }
+  }
+};
+</script>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<style>
+/* ── Content typography ── */
+#content section {
+  margin: 1.5rem 0;
+  padding: 1.25rem 1.5rem;
+  border-radius: 0.75rem;
+  background: rgb(31 41 55 / 0.4);
+  border: 1px solid rgb(55 65 81 / 0.5);
+  position: relative;
+}
+#content section.tldr {
+  background: rgb(59 130 246 / 0.08);
+  border-left: 4px solid #3b82f6;
+  border-color: #3b82f6;
+}
+#content section.tldr h2 { color: #60a5fa; }
+#content h2 {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9ca3af;
+  margin: 0 0 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgb(55 65 81 / 0.5);
+}
+#content h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #e5e7eb;
+  margin: 1.25rem 0 0.5rem;
+}
+#content h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #d1d5db;
+  margin: 1rem 0 0.4rem;
+}
+#content p {
+  margin: 0.5rem 0;
+  line-height: 1.7;
+  color: #d1d5db;
+}
+#content ul {
+  padding-left: 1.25rem;
+  margin: 0.5rem 0;
+}
+#content li {
+  margin: 0.35rem 0;
+  line-height: 1.6;
+  color: #d1d5db;
+}
+#content li.status-done,
+#content li.status-warn,
+#content li.status-risk,
+#content li.status-action {
+  list-style: none;
+  position: relative;
+  padding-left: 0.5rem;
+}
+#content li.status-done::before,
+#content li.status-warn::before,
+#content li.status-risk::before,
+#content li.status-action::before {
+  content: "";
+  position: absolute;
+  left: -1rem;
+  top: 0.6em;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+#content li.status-done::before { background: #22c55e; }
+#content li.status-warn::before { background: #f59e0b; }
+#content li.status-risk::before { background: #ef4444; }
+#content li.status-action::before { background: #3b82f6; }
+
+#content code {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.85em;
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.25rem;
+  background: rgb(55 65 81 / 0.6);
+  color: #e5e7eb;
+}
+#content pre {
+  overflow-x: auto;
+  padding: 1rem 1.25rem;
+  border-radius: 0.5rem;
+  background: rgb(17 24 39 / 0.8);
+  border: 1px solid rgb(55 65 81 / 0.5);
+  margin: 0.75rem 0;
+  position: relative;
+}
+#content pre code {
+  padding: 0;
+  background: none;
+  font-size: 0.85em;
+  line-height: 1.6;
+  color: #d1d5db;
+}
+#content strong { color: #f3f4f6; font-weight: 600; }
+mjx-container { overflow-x: auto; overflow-y: hidden; max-width: 100%; }
+
+/* ── Pre copy button ── */
+.pre-copy-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.7rem;
+  border-radius: 0.25rem;
+  background: rgb(55 65 81 / 0.8);
+  color: #9ca3af;
+  border: 1px solid rgb(75 85 99 / 0.5);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 150ms;
+}
+#content pre:hover .pre-copy-btn { opacity: 1; }
+.pre-copy-btn:hover { background: rgb(75 85 99); color: #e5e7eb; }
+
+/* ── Print ── */
+@media print {
+  body { background: white !important; color: black !important; }
+  #content section { break-inside: avoid; border: 1px solid #ddd; background: #f9fafb; }
+  #content section.tldr { border-left: 4px solid #3b82f6; }
+  .pre-copy-btn, footer button { display: none !important; }
+  #content h2, #content h3, #content h4 { color: #111; }
+  #content p, #content li { color: #333; }
+  #content code { background: #e5e7eb; color: #111; }
+  #content pre { background: #f3f4f6; border-color: #d1d5db; }
+  #content pre code { color: #111; }
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  #content section { padding: 1rem 1.15rem; }
+}
+</style>
+</head>
+<body class="bg-gray-950 text-gray-100 min-h-screen antialiased">
+
+<!-- ── Header ── -->
+<header class="border-b border-gray-800 bg-gray-950/80 backdrop-blur-sm sticky top-0 z-50">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 py-4">
+    <div class="min-w-0">
+      <div class="flex items-center gap-2.5 flex-wrap">
+        <h1 class="text-lg font-semibold text-gray-100 truncate">btw — how large is the model?</h1>
+      </div>
+      <p class="text-xs text-gray-500 mt-1">Generated Fri, Jun 26, 2026, 01:40 PM by <code class="text-xs px-1 py-0.5 rounded bg-gray-800 text-gray-400">/btw</code></p>
+    </div>
+  </div>
+</header>
+
+<!-- ── Main content ── -->
+<main class="max-w-3xl mx-auto px-4 sm:px-6 py-8">
+  <div id="content">
+<h1>Unlimited-OCR Model Size</h1>
+<p><strong>TL;DR:</strong> ~3.3 billion parameters, ~6.2 GB on disk (single safetensors file, bfloat16).</p>
+<section class="">
+<h2>Details</h2>
+<p>| Metric | Value | |---|---| | Parameters | <strong>3,336,106,240</strong> (~3.3B) | | Weights file | <code>model-00001-of-000001.safetensors</code> — <strong>6.21 GB</strong> | | Precision | bfloat16 (2 bytes/param × 3.3B ≈ 6.2 GB ✓) | | Architecture | DeepSeek-V2 variant (MoE-style vision-language model) | | VRAM needed | ~8–12 GB for inference (weights + KV cache + activations) |</p>
+<p>It&#39;s a relatively small model — fits on a single A800 with room to spare. First download to the server will take a few minutes depending on bandwidth. Your 6×A800 setup is massive overkill for one instance, but that means you could run multiple GPUs in parallel if you wanted to split the 776-page book across them.</p>
+</section>
+  </div>
+  <footer class="mt-12 pt-4 border-t border-gray-800 text-xs text-gray-600 flex items-center justify-between flex-wrap gap-2">
+    <span>Generated Fri, Jun 26, 2026, 01:40 PM by <code class="px-1 py-0.5 rounded bg-gray-800/50 text-gray-500">/btw</code></span>
+    <button onclick="window.print()" class="px-2 py-1 rounded text-gray-500 hover:text-gray-300 hover:bg-gray-800 transition-colors">🖨️ Print</button>
+  </footer>
+</main>
+
+<script>
+(function() {
+  'use strict';
+  document.querySelectorAll('#content pre').forEach(function(pre) {
+    var btn = document.createElement('button');
+    btn.className = 'pre-copy-btn';
+    btn.textContent = 'Copy';
+    btn.setAttribute('aria-label', 'Copy code');
+    btn.addEventListener('click', function() {
+      var code = pre.querySelector('code');
+      var text = code ? code.textContent : pre.textContent;
+      navigator.clipboard.writeText(text).then(function() {
+        btn.textContent = 'Copied!';
+        setTimeout(function() { btn.textContent = 'Copy'; }, 1500);
+      });
+    });
+    pre.appendChild(btn);
+  });
+})();
+</script>
+</body>
+</html>

@@ -10,6 +10,7 @@ Primary use case here: **converting book PDFs into structured text with preserve
 
 ```
 infer.py              # Concurrent SGLang batch inference (main script for book conversion)
+postprocess.py        # Merge per-page outputs, strip detection tags, extract figures from PDF
 wheel/                # Patched SGLang wheel (sglang-0.0.0.dev11416+g92e8bb79e)
 assets/               # README images only — not code
 Unlimited-OCR.pdf     # The paper
@@ -52,14 +53,30 @@ Each page produces a `.md` file in `--output_dir` (e.g., `my_book_page_0001.md`)
 
 `infer.py` uses `gundam` by default (one request per page), which is correct for books.
 
-### 3. Output format
+### 3. Post-process: merge, strip tags, extract figures
+
+Raw output has `<|det|>type [x,y,w,h]<|/det|>` detection tags wrapping every element.
+`postprocess.py` cleans this up and extracts figures from the source PDF:
+
+```bash
+python postprocess.py \
+    --page_dir ./outputs \
+    --pdf ./my_book.pdf \
+    --output ./outputs/my_book_full.md \
+    --figure_dir ./outputs/figures
+```
+
+This produces:
+- One clean Markdown file with `<!-- page N -->` comments for navigation
+- `figures/` directory with cropped PNGs (bounding boxes from OCR → PDF crop)
+- `![Figure](figures/...)` links inline, captions in italics
+
+### 4. Output format
 
 Output is **Markdown** with `$...$` / `$$...$$` LaTeX math blocks. It is **not** a compilable `.tex` file. To get `.tex`:
 
 ```bash
-# Concatenate all pages, then convert
-cat outputs/my_book_page_*.md > full_book.md
-pandoc full_book.md -o full_book.tex
+pandoc outputs/my_book_full.md -o my_book.tex
 ```
 
 Manual cleanup will be needed for: cross-references, bibliography, figure placement, and custom macros.

@@ -1,0 +1,10 @@
+assets/
+Unlimited-OCR.pdf
+Kaye*.pdf
+Nielsen*.pdf
+Watrous*.pdf
+Quantum information theory*
+__pycache__/
+*.pyc
+outputs/
+log/
